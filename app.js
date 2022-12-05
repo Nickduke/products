@@ -6,10 +6,36 @@ const fetchProducts = async () => {
   try {
     const resp = await fetch(url);
     const data = await resp.json();
-    console.log(data);
+    return data;
   } catch (error) {
     console.log(error);
     productsDOM.innerHTML = `<p class="error">there was an error</p>`;
   }
 };
+
+const displayProducts = (list) => {
+  const producList = list
+    .map((product) => {
+      const { id } = product;
+      const { name: title, price } = product.fields;
+      const { url: img } = product.fields.image[0];
+      const formatPrice = price / 100;
+      return `<a href="product.html" class="single-product">
+            <img src="${img}" alt="${title}" class="single-product-img img" />
+            <footer>
+              <h5 class="name">${title}</h5>
+              <span class="price">${formatPrice}</span>
+            </footer>
+          </a>`;
+    })
+    .join('');
+  productsDOM.innerHTML = `<div class="products-container">${producList}</div>`;
+};
+
+const start = async () => {
+  const data = await fetchProducts();
+  displayProducts(data);
+};
+
 fetchProducts();
+start();
